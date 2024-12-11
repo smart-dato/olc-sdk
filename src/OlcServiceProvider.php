@@ -4,7 +4,6 @@ namespace SmartDato\Olc;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SmartDato\Olc\Commands\OlcCommand;
 
 class OlcServiceProvider extends PackageServiceProvider
 {
