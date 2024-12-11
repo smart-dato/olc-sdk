@@ -1,0 +1,19 @@
+{
+    "statusCode": 201,
+    "headers": {
+        "Server": "nginx\/1.25.4",
+        "Content-Type": "application\/json",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "X-Powered-By": "PHP\/8.3.14",
+        "Cache-Control": "no-cache, private",
+        "Date": "Wed, 11 Dec 2024 17:51:31 GMT",
+        "X-RateLimit-Limit": "600",
+        "X-RateLimit-Remaining": "599",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+    },
+    "data": "{\"data\":{\"key\":\"OLS202400000001\",\"shipmentState\":\"OK\",\"createdAt\":\"2024-12-31 23:59:59\"}}"
+}
