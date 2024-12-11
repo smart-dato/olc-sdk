@@ -21,7 +21,7 @@ class Olc
     ) {
         $this->connector = new OlcConnector(
             url: $this->url,
-            token: $this->url,
+            token: $this->token,
         );
     }
 
