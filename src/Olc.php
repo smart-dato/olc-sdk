@@ -13,10 +13,16 @@ use SmartDato\Olc\Requests\GetShipmentLabelRequest;
 
 class Olc
 {
+    public Connector $connector;
+
     public function __construct(
-        public Connector $connector = new OlcConnector,
+        readonly protected ?string $url = null,
+        readonly protected ?string $token = null,
     ) {
-        //
+        $this->connector = new OlcConnector(
+            url: $this->url,
+            token: $this->url,
+        );
     }
 
     /**
