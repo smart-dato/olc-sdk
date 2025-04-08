@@ -17,6 +17,7 @@ class ShipmentObject implements DataObject
 
         public ?string $reference_1 = null,
         public ?string $reference_2 = null,
+        public ?string $comment = null,
 
         public ?ProductObject $products = null,
         public ?AddressObject $billingAddress = null,
@@ -33,6 +34,7 @@ class ShipmentObject implements DataObject
             'shippingService' => $this->shippingService,
             'reference1' => $this->reference_1,
             'reference2' => $this->reference_2,
+            'comment' => $this->comment,
 
             'pickupAddress' => $this->pickupAddress->build(),
             'deliveryAddress' => $this->deliveryAddress->build(),
