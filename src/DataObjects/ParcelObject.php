@@ -12,11 +12,13 @@ class ParcelObject implements DataObject
         public float $height = 0.0,
         public float $length = 0.0,
         public ?string $type = null,
+        public ?string $reference = null,
     ) {}
 
     public function build(): array
     {
         return [
+            'reference' => $this->reference,
             'weight' => $this->weight,
 
             'width' => $this->width,
