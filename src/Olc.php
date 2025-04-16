@@ -10,6 +10,7 @@ use SmartDato\Olc\DataObjects\ShipmentObject;
 use SmartDato\Olc\Exceptions\GenericOlcException;
 use SmartDato\Olc\Requests\CreateShipmentRequest;
 use SmartDato\Olc\Requests\GetShipmentLabelRequest;
+use SmartDato\Olc\Requests\GetShipmentTrackingRequest;
 
 class Olc
 {
@@ -65,5 +66,26 @@ class Olc
         }
 
         return $response->json('file');
+    }
+
+    /**
+     * @throws GenericOlcException
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
+    public function getTrackingEvents(string $value): string
+    {
+        $response = $this->connector->send(
+            new GetShipmentTrackingRequest(
+                value: $value,
+            )
+        );
+
+        if ($response->failed()) {
+            throw new GenericOlcException($response->body());
+        }
+
+        return $response->json();
     }
 }
