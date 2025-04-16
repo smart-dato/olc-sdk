@@ -74,7 +74,7 @@ class Olc
      * @throws RequestException
      * @throws JsonException
      */
-    public function getTrackingEvents(string $value): string
+    public function getTrackingEvents(string $value)
     {
         $response = $this->connector->send(
             new GetShipmentTrackingRequest(
