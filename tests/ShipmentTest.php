@@ -17,7 +17,7 @@ it('can create a new shipment', function () {
     );
 
     $connector->withMockClient(new MockClient([
-        CreateShipmentRequest::class => MockResponse::fixture('shipment.create.multicollo'),
+        CreateShipmentRequest::class => MockResponse::fixture('shipment/create_multicollo'),
     ]));
 
     $response = $connector->send(
@@ -60,7 +60,7 @@ it('can collect a label', function () {
     );
 
     $connector->withMockClient(new MockClient([
-        GetShipmentLabelRequest::class => MockResponse::fixture('shipment.label.multicollo'),
+        GetShipmentLabelRequest::class => MockResponse::fixture('shipment/label_multicollo'),
     ]));
 
     $response = $connector->send(
