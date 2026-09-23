@@ -2,6 +2,21 @@
 
 All notable changes to `olc-sdk` will be documented in this file.
 
+## 0.0.10 - 2026-09-23
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 3.0.0 to 3.1.0 by @dependabot[bot] in https://github.com/smart-dato/olc-sdk/pull/14
+* Bump actions/checkout from 6.0.3 to 7.0.1 by @dependabot[bot] in https://github.com/smart-dato/olc-sdk/pull/16
+* fix(ci): drop the Laravel 10 leg from the test matrix by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/17
+* fix(phpstan): silence the larastan env() false positive by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/18
+* ci: check code style instead of auto-committing it by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/19
+* ci: commit the changelog through the API so it is signed by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/20
+* fix: actually send the shipment content by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/21
+* docs: update README and fix issues found while documenting by @michael-tscholl in https://github.com/smart-dato/olc-sdk/pull/22
+
+**Full Changelog**: https://github.com/smart-dato/olc-sdk/compare/0.0.9...0.0.10
+
 ## 0.0.7 - 2025-04-16
 
 **Full Changelog**: https://github.com/smart-dato/olc-sdk/compare/0.0.6...0.0.7
