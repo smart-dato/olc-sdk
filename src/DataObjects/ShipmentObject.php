@@ -2,7 +2,6 @@
 
 namespace SmartDato\Olc\DataObjects;
 
-use Illuminate\Support\Collection;
 use SmartDato\Olc\Contracts\DataObject;
 
 class ShipmentObject implements DataObject
@@ -23,7 +22,7 @@ class ShipmentObject implements DataObject
         public ?AddressObject $billingAddress = null,
         public ?CashOnDeliveryObject $cashOnDelivery = null,
         public ?float $insurance = null,
-        public ?Collection $content = null,
+        public ?ContentObjectCollection $content = null,
         public ?CarrierObject $carrierObject = null,
     ) {}
 
@@ -44,6 +43,7 @@ class ShipmentObject implements DataObject
             'products' => $this->products?->build(),
             'cashOnDelivery' => $this->cashOnDelivery?->build(),
             'carrier' => $this->carrierObject?->build(),
+            'content' => $this->content?->build(),
         ], static function ($item) {
             return $item !== null;
         });
