@@ -2,59 +2,120 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/smart-dato/olc-sdk.svg?style=flat-square)](https://packagist.org/packages/smart-dato/olc-sdk)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/smart-dato/olc-sdk/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/smart-dato/olc-sdk/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/smart-dato/olc-sdk/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/smart-dato/olc-sdk/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/smart-dato/olc-sdk/code-style.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/smart-dato/olc-sdk/actions?query=workflow%3A%22Code+style%22+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/smart-dato/olc-sdk.svg?style=flat-square)](https://packagist.org/packages/smart-dato/olc-sdk)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A Laravel package for the OLC v2 customer API, built on [Saloon](https://docs.saloon.dev). Create shipments, fetch labels and read tracking events.
 
-## Support us
+For plain PHP projects without Laravel, use [smart-dato/php-olc-sdk](https://github.com/smart-dato/php-olc-sdk).
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/olc-sdk.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/olc-sdk)
+## Requirements
 
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- PHP 8.3+
+- Laravel 10 – 13
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require smart-dato/olc-sdk
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="olc-sdk-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
+Publish the config file:
 
 ```bash
 php artisan vendor:publish --tag="olc-sdk-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="olc-sdk-views"
+```dotenv
+OLC_URL=https://your-olc-host
+OLC_TOKEN=your-api-token
 ```
 
 ## Usage
 
 ```php
-$olc = new SmartDato\Olc();
-echo $olc->echoPhrase('Hello, SmartDato!');
+use SmartDato\Olc\Olc;
+
+$olc = new Olc(); // URL and token from config
+$olc = new Olc(url: 'https://your-olc-host', token: 'your-token'); // or explicitly
 ```
+
+The `Olc` facade resolves the same class with the configured values.
+
+### Create a shipment
+
+```php
+use SmartDato\Olc\DataObjects\AddressObject;
+use SmartDato\Olc\DataObjects\ContentObject;
+use SmartDato\Olc\DataObjects\ContentObjectCollection;
+use SmartDato\Olc\DataObjects\ParcelObject;
+use SmartDato\Olc\DataObjects\ParcelObjectCollection;
+use SmartDato\Olc\DataObjects\ShipmentObject;
+
+$shipment = new ShipmentObject(
+    shipmentType: 'PARCEL',
+    shippingService: 'EC',
+    pickupAddress: new AddressObject(warehouse: 'WH_1'),
+    deliveryAddress: new AddressObject(
+        personName: 'John Doe',
+        companyName: 'Acme Inc.',
+        street: '123 Main St',
+        city: 'Anytown',
+        zipcode: '12345',
+        countryCode: 'DE',
+    ),
+    parcels: (new ParcelObjectCollection)
+        ->add(new ParcelObject(weight: 2.5, width: 10, height: 10, length: 10))
+        ->add(new ParcelObject(weight: 1.23)),
+    reference_1: 'order-1001',
+    content: (new ContentObjectCollection)
+        ->add(new ContentObject(
+            description: 'Cotton shirt',
+            hsCode: '6109.10',
+            quantity: 2,
+            unitValue: 12.50,
+            netWeight: 0.2,
+            manufacturerCountry: 'CN',
+            currency: 'EUR',
+            invoiceNumber: 'INV-1',
+            invoiceDate: '2026-09-23',
+        )),
+);
+
+$data = $olc->createShipment($shipment);
+```
+
+`shipmentType` and `shippingService` must be keys configured for your OLC account; `PARCEL` and `EC` are the values used in the tests.
+
+`ShipmentObject` also accepts `reference_2`, `comment`, `products` (`ProductObject` — delivery options such as `b2cDelivery` or `scheduledDelivery`), `cashOnDelivery` (`CashOnDeliveryObject`), `insurance` (amount) and `carrierObject` (`CarrierObject`). Null values are left out of the request.
+
+`content` is optional and describes the goods, e.g. for customs. Each `ContentObject` maps to one item; every field is optional and only the ones you set are sent. `invoiceDate`, `invoiceNumber` and `invoiceImage` are grouped into an `invoice` object.
+
+`createShipment()` returns the `data` field of the response.
+
+### Labels and tracking
+
+Both look a shipment up by its OLC shipment key by default:
+
+```php
+$label = $olc->getLabel('OLS000000000001');          // the `file` field of the response
+$events = $olc->getTrackingEvents('OLS000000000001'); // the decoded JSON response
+```
+
+To look up by one of your own references, send the request through the connector with a `ShipmentReferenceTyp` (`KEY`, `REFERENCE1`, `REFERENCE2`):
+
+```php
+use SmartDato\Olc\Enums\ShipmentReferenceTyp;
+use SmartDato\Olc\Requests\GetShipmentLabelRequest;
+
+$response = $olc->connector->send(
+    new GetShipmentLabelRequest('order-1001', ShipmentReferenceTyp::REFERENCE1)
+);
+```
+
+### Errors
+
+`createShipment()`, `getLabel()` and `getTrackingEvents()` throw `GenericOlcException` with the response body when OLC returns an error status.
 
 ## Testing
 
@@ -62,13 +123,11 @@ echo $olc->echoPhrase('Hello, SmartDato!');
 composer test
 ```
 
+The suite replays recorded responses with Saloon's `MockClient`, so it needs no credentials or network access.
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
