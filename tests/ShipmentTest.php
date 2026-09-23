@@ -138,3 +138,29 @@ it('omits content when none is given', function () {
 
     expect($shipment->build())->not->toHaveKey('content');
 });
+
+it('includes insurance in the built payload', function () {
+    $shipment = new ShipmentObject(
+        shipmentType: 'PARCEL',
+        shippingService: 'EC',
+        pickupAddress: new AddressObject(warehouse: 'WH_1'),
+        deliveryAddress: new AddressObject(personName: 'John Doe'),
+        parcels: (new ParcelObjectCollection)->add(new ParcelObject(weight: 2.5)),
+        insurance: 500.0,
+    );
+
+    expect($shipment->build()['insurance'])->toBe(500.0);
+});
+
+it('reads the base url and token from the config', function () {
+    config()->set('olc-sdk.base_url', 'https://olc.example');
+    config()->set('olc-sdk.token', 'config-token');
+
+    $connector = new OlcConnector;
+
+    expect($connector->resolveBaseUrl())->toBe('https://olc.example');
+
+    $pendingRequest = $connector->createPendingRequest(new GetShipmentLabelRequest('OLS1'));
+
+    expect($pendingRequest->headers()->get('Authorization'))->toBe('Bearer config-token');
+});

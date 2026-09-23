@@ -17,13 +17,13 @@ class OlcConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return $this->url ?? config('olc.base_url');
+        return $this->url ?? config('olc-sdk.base_url');
     }
 
     protected function defaultAuth(): TokenAuthenticator
     {
         return new TokenAuthenticator(
-            token: $this->token ?? config('olc.token')
+            token: $this->token ?? config('olc-sdk.token')
         );
     }
 

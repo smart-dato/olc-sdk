@@ -19,6 +19,8 @@ class ShipmentObject implements DataObject
         public ?string $comment = null,
 
         public ?ProductObject $products = null,
+
+        /** @deprecated The OLC API has no billing address; this value is not sent. */
         public ?AddressObject $billingAddress = null,
         public ?CashOnDeliveryObject $cashOnDelivery = null,
         public ?float $insurance = null,
@@ -42,6 +44,7 @@ class ShipmentObject implements DataObject
 
             'products' => $this->products?->build(),
             'cashOnDelivery' => $this->cashOnDelivery?->build(),
+            'insurance' => $this->insurance,
             'carrier' => $this->carrierObject?->build(),
             'content' => $this->content?->build(),
         ], static function ($item) {

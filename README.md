@@ -31,18 +31,16 @@ OLC_URL=https://your-olc-host
 OLC_TOKEN=your-api-token
 ```
 
-> **Pass the URL and token explicitly for now.** The config is published as `olc-sdk`, but the connector reads `config('olc.base_url')` and `config('olc.token')`, so the config fallback — and therefore the `Olc` facade — does not pick these values up.
-
 ## Usage
 
 ```php
 use SmartDato\Olc\Olc;
 
-$olc = new Olc(
-    url: config('olc-sdk.base_url'),
-    token: config('olc-sdk.token'),
-);
+$olc = new Olc(); // URL and token from config
+$olc = new Olc(url: 'https://your-olc-host', token: 'your-token'); // or explicitly
 ```
+
+The `Olc` facade resolves the same class with the configured values.
 
 ### Create a shipment
 
@@ -89,7 +87,7 @@ $data = $olc->createShipment($shipment);
 
 `shipmentType` and `shippingService` must be keys configured for your OLC account; `PARCEL` and `EC` are the values used in the tests.
 
-`ShipmentObject` also accepts `reference_2`, `comment`, `products` (`ProductObject` — delivery options such as `b2cDelivery` or `scheduledDelivery`), `cashOnDelivery` (`CashOnDeliveryObject`) and `carrierObject` (`CarrierObject`). Null values are left out of the request.
+`ShipmentObject` also accepts `reference_2`, `comment`, `products` (`ProductObject` — delivery options such as `b2cDelivery` or `scheduledDelivery`), `cashOnDelivery` (`CashOnDeliveryObject`), `insurance` (amount) and `carrierObject` (`CarrierObject`). Null values are left out of the request.
 
 `content` is optional and describes the goods, e.g. for customs. Each `ContentObject` maps to one item; every field is optional and only the ones you set are sent. `invoiceDate`, `invoiceNumber` and `invoiceImage` are grouped into an `invoice` object.
 
