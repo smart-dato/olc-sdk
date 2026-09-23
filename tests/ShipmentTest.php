@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 use SmartDato\Olc\DataObjects\AddressObject;
@@ -72,4 +73,46 @@ it('can collect a label', function () {
         ->toBe(200);
 
     ray($response->json());
+});
+
+it('includes content in the built payload', function () {
+    $shipment = new ShipmentObject(
+        shipmentType: 'PARCEL',
+        shippingService: 'EC',
+        pickupAddress: new AddressObject(warehouse: 'WH_1'),
+        deliveryAddress: new AddressObject(
+            personName: 'John Doe',
+            street: '123 Main St',
+            city: 'Anytown',
+            zipcode: '12345',
+            countryCode: 'DE',
+        ),
+        parcels: (new ParcelObjectCollection)->add(new ParcelObject(weight: 2.5)),
+        content: new Collection([
+            ['description' => 'Cotton shirt', 'quantity' => 2],
+        ]),
+    );
+
+    expect($shipment->build())
+        ->toHaveKey('content')
+        ->and($shipment->build()['content'])
+        ->toBe([['description' => 'Cotton shirt', 'quantity' => 2]]);
+});
+
+it('omits content when none is given', function () {
+    $shipment = new ShipmentObject(
+        shipmentType: 'PARCEL',
+        shippingService: 'EC',
+        pickupAddress: new AddressObject(warehouse: 'WH_1'),
+        deliveryAddress: new AddressObject(
+            personName: 'John Doe',
+            street: '123 Main St',
+            city: 'Anytown',
+            zipcode: '12345',
+            countryCode: 'DE',
+        ),
+        parcels: (new ParcelObjectCollection)->add(new ParcelObject(weight: 2.5)),
+    );
+
+    expect($shipment->build())->not->toHaveKey('content');
 });

@@ -44,6 +44,7 @@ class ShipmentObject implements DataObject
             'products' => $this->products?->build(),
             'cashOnDelivery' => $this->cashOnDelivery?->build(),
             'carrier' => $this->carrierObject?->build(),
+            'content' => $this->content?->toArray(),
         ], static function ($item) {
             return $item !== null;
         });
