@@ -9,6 +9,7 @@ use Saloon\Http\Connector;
 use SmartDato\Olc\DataObjects\ShipmentObject;
 use SmartDato\Olc\Exceptions\GenericOlcException;
 use SmartDato\Olc\Requests\CreateShipmentRequest;
+use SmartDato\Olc\Requests\DeleteShipmentLabelRequest;
 use SmartDato\Olc\Requests\GetShipmentLabelRequest;
 use SmartDato\Olc\Requests\GetShipmentTrackingRequest;
 
@@ -66,6 +67,26 @@ class Olc
         }
 
         return $response->json('file');
+    }
+
+    /**
+     * Delete the label of a shipment, which cancels the shipment in OLC.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws GenericOlcException
+     */
+    public function deleteLabel(string $value): void
+    {
+        $response = $this->connector->send(
+            new DeleteShipmentLabelRequest(
+                value: $value,
+            )
+        );
+
+        if ($response->failed()) {
+            throw new GenericOlcException($response->json('message') ?? $response->body());
+        }
     }
 
     /**
